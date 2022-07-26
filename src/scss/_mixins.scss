@@ -1,0 +1,18 @@
+@import "./variables";
+
+@mixin button($width: 100px, $height: 34px) {
+    width: $width;
+    height: $height;
+
+    background: $primary-color;
+    border-radius: 80px;
+    
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+
+    &:disabled {
+        background: #B4B4B4;
+        color: $default-color;
+    }
+}

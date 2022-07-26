@@ -1,1 +1,16 @@
 @import 'scss-reset/_reset.scss';
+@import "./scss/variables";
+@import url("https://fonts.googleapis.com/css?family=Nunito");
+
+
+
+body {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 26px;
+
+    background: $background-color;
+}
+

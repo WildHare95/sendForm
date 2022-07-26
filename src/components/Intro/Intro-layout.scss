@@ -1,0 +1,77 @@
+@import "../../scss/mixins";
+@import "../../scss/variables";
+$background-img: url("../../assets/pexels-alexandr-podvalny-1227513.jpeg");
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 650px;
+    margin-bottom: 140px;
+
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), $background-img;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+
+    &__inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__title {
+        max-width: 380px;
+        height: 80px;
+        margin-bottom: 21px;
+
+        text-align: center;
+        font-size: 40px;
+        line-height: 40px;
+        color: $default-color;
+    }
+
+    &__suptitle {
+        max-width: 380px;
+        height: 156px;
+        margin-bottom: 32px;
+
+        text-align: center;
+        color: $default-color;
+    }
+
+    &__button {
+        @include button;
+
+    }
+}
+
+
+@media (max-width: 768px) {
+    .intro {
+        height: 500px;
+    }
+}
+
+
+@media (max-width: 360px) {
+    .intro {
+        
+        background-size: auto 100%;
+
+        &__inner {
+            margin-bottom: 34px;
+        }
+
+        &__title {
+            width: 328px;
+            height: 120px;
+        }
+
+        &__suptitle {
+            width: 328px;
+            height: 182px;
+        }
+    }
+}

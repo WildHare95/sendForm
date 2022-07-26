@@ -1,0 +1,59 @@
+@import "../../scss/mixins";
+@import "../../scss/variables";
+
+.header {
+    
+    background: $default-color;
+
+    &__inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+
+        max-width: 1170px;
+        margin: 0 auto;
+    }
+
+    &__logo {
+        width: 104px;
+        height: 26px;
+    }
+
+    &__buttons {
+
+        &-users {
+            @include button;
+            margin-right: 10px;
+        }
+
+        &-sing-up {
+            @include button;
+        }
+
+    }
+}
+
+@media (max-width: 1024px) {
+    .header {
+        &__inner {
+            margin: 0 60px;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        &__inner {
+            margin: 0 32px;
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .header {
+        &__inner {
+            margin: 0 16px;
+        }
+    }
+}
