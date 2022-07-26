@@ -1,113 +1,98 @@
+import { ChangeEvent, ReactEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { debounce } from "../../core/utils/dobounce"
+import validator, { Errors, ValidData } from "../../core/utils/validator"
 import "./Form-layout.scss"
+import Input from "./Input"
+import RadioButton from "./RadioButton"
 
 const Form = () => {
+
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [position, setPosition] = useState("")
+
+    const ref = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.defaultChecked = true
+            setPosition(ref.current.value)
+        }
+    }, [])
+
+    const debouncedChangeHandler = useMemo(() => {
+        return debounce(700)
+    }, [])
+
+    const submitForm = (e: React.SyntheticEvent) => {
+        e.preventDefault()
+        const target = e.target as typeof e.target & {
+            name: { value: string }
+            email: { value: string }
+            phone: { value: string }
+        }
+
+        const obj = {
+            name: target.name.value,
+            email: target.email.value,
+            phone: target.phone.value,
+            position: position
+        }
+    }
+
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+        switch (event.target.name) {
+            case "name":
+                setName(event.target.value)
+                break
+            case "email":
+                setEmail(event.target.value)
+                break
+            case "phone":
+                setPhoneNumber(event.target.value)
+                break
+        }
+
+        const obj = {
+            name: name,
+            email: email,
+            phone: phoneNumber,
+            position_id: 1
+        }
+
+        debouncedChangeHandler(() => {
+            console.log(validator(obj))
+            validator(obj)
+        })
+      
+    }
+
+    const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
+        setPosition(event.target.value)
+    }
+
     return (
         <div className="form">
-            <form action="/" method="post" className="form__inner">
+            <form className="form__inner" onSubmit={submitForm}>
                 <h1 className="form__title">Working with POST request</h1>
 
-                <div className="form__row">
-                    <label
-                        htmlFor="input-name"
-                        className="form__labale"
-                    >
-                        <input
-                            type="text" placeholder="Your name"
-                            id="input-name"
-                            className="form__input"
-                        />
+                <Input id="input-name" placeholder="Your name" name="name" value={name} onChange={onChange} />
+                <Input id="input-email" placeholder="Email" name="email" value={email} onChange={onChange} />
+                <Input id="input-phone" placeholder="Phone" name="phone" value={phoneNumber} onChange={onChange} />
+                <small className="form__notation">
+                    +38 (XXX) XXX - XX - XX
+                </small>
 
-                    </label>
-                </div>
-
-                <div className="form__row">
-                    <label
-                        htmlFor="input-email"
-                        className="form__labale"
-                    >
-                        <input
-                            type="text" placeholder="Email"
-                            id="input-email"
-                            className="form__input"
-                        />
-
-                    </label>
-                </div>
-
-                <div className="form__row">
-                    <label
-                        htmlFor="input-phone"
-                        className="form__label"
-                    >
-                        <input
-                            type="text" placeholder="Phone"
-                            id="input-phone"
-                            className="form__input"
-                        />
-                        <small className="form__notation">
-                            +38 (XXX) XXX - XX - XX
-                        </small>
-                    </label>
-                </div>
-
-
-
-                <div className="form__check-wrapper">
+                <div className="form__check-wrapper" onChange={onChangeValue}>
 
                     <h2 className="form__suptitle">Select your position</h2>
 
-                    <div className="form__radio">
-                        <input
-                            className="form__radio-input"
-                            id="frontend"
-                            type="radio"
-                            value="option1"
-                            defaultChecked
-                            name="position"
-                        />
-                        <label className="form__radio-label" htmlFor="frontend">
-                            Frontend developer
-                        </label>
-                    </div>
+                    <RadioButton value="option1" id="frontend" position="Frontend developer" defaultChecked={ref} />
+                    <RadioButton value="option2" id="backend" position="Backend developer" />
+                    <RadioButton value="option3" id="designer" position="Designer" />
+                    <RadioButton value="option4" id="qa" position="QA" />
 
-                    <div className="form__radio">
-                        <input
-                            className="form__radio-input"
-                            id="backend"
-                            type="radio"
-                            value="option2"
-                            name="position"
-                        />
-                        <label className="form__radio-label" htmlFor="backend">
-                            Backend developer
-                        </label>
-                    </div>
-
-                    <div className="form__radio">
-                        <input
-                            className="form__radio-input"
-                            id="designer"
-                            type="radio"
-                            value="option3"
-                            name="position"
-                        />
-                        <label className="form__radio-label" htmlFor="designer">
-                            Designer
-                        </label>
-                    </div>
-
-                    <div className="form__radio">
-                        <input
-                            className="form__radio-input"
-                            id="qa"
-                            type="radio"
-                            value="option4"
-                            name="position"
-                        />
-                        <label className="form__radio-label" htmlFor="qa">
-                            QA
-                        </label>
-                    </div>
                 </div>
 
                 <div className="form__file-wrapper">
@@ -129,7 +114,9 @@ const Form = () => {
 
                 <button
                     className="form__submit"
-                    disabled={true}>
+                    disabled={false}
+                    onSubmit={(event) => submitForm(event)}
+                >
                     Sign up
                 </button>
 

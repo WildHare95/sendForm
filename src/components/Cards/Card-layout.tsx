@@ -1,22 +1,45 @@
 import "./Cards-layout.scss";
 import Card from "./Card"
+import { User } from "../../core/models/users.model";
+import { useEffect, useState } from "react";
+import { SuccessfulResponse } from "../../core/models/api.models";
+import usersAPI from "../../core/ api/APIUsers";
+import sortedByDate from "../../core/utils/sortedByDate";
 
 const Cards = () => {
+
+    const [users, setUsers] = useState<User[]>([])
+    const [currentPage, setPage] = useState<number>(1)
+    const [totalPages, setTotalPages] = useState<number>(0)
+
+
+    useEffect(() => {
+        // usersAPI.getUsers(currentPage).then((response: SuccessfulResponse) => {
+        //     setTotalPages(response.total_pages)
+        //     setUsers(sortedByDate(users, response.users))
+        // })
+    }, [currentPage])
+
     return (
         <div className="cards">
             <div className="cards__inner">
                 <h1 className="cards__title">Working with GET request</h1>
                 <div className="cards__content">
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
+                    {
+                        users.map((user) => {
+                            return <Card key={user.id} user={user} />
+                        })
+                    }
                 </div>
-                <div className="cards__button">
-                    Show more
-                </div>
+                {
+                    currentPage !== totalPages &&
+                    <button
+                        onClick={() => setPage(page => page + 1)}
+                        className="cards__button">
+                        Show more
+                    </button>
+                }
+
             </div>
         </div>
     )

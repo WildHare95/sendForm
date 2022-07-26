@@ -1,4 +1,4 @@
-import { Users } from "./users.model"
+import { User } from "./users.model"
 
 export interface SuccessfulResponse {
     success: boolean
@@ -10,7 +10,7 @@ export interface SuccessfulResponse {
         next_url: string
         prev_url: null
     },
-    users: Users
+    users: User[]
 }
 
 export interface NotFoundResponse {

@@ -8,8 +8,3 @@ export interface User {
     registration_timestamp: number,
     photo: string
 }
-
-export interface Users {
-    users: Array<Users>
-}
-
