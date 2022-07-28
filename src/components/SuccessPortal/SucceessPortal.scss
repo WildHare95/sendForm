@@ -16,9 +16,18 @@
 
     background: rgba(0, 0, 0, 0.507);
 
+    &__answer-request {
+        color: #FFFF;
+        font-size: 40px;
+        font-weight: bold;
+    }
 
-
+    &__img {
+        margin-bottom: 40px;
+    }
 }
+
+
 
 @keyframes ani {
     0% {opacity: 0;}

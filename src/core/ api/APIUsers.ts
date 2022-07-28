@@ -1,4 +1,4 @@
-import { SuccessfulResponse } from "../models/api.models"
+import { SuccessedPost, SuccessfulResponse } from "../models/api.models"
 import { Position } from "../models/users.model"
 
 const APIUrl = "https://frontend-test-assignment-api.abz.agency/api/v1/"
@@ -18,7 +18,10 @@ const usersAPI = {
             "Token": JSON.stringify(localStorage.getItem("token")),
         }
         
-    }),
+    })
+    .then(response => response.json())
+    .then(response => response) as Promise<SuccessedPost>,
+    
     getPositions: () => {
         return fetch(`${APIUrl}positions`)
         .then(response => response.json())

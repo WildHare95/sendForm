@@ -1,19 +1,5 @@
 import { stringPatterns } from "../constants/stringPatterns"
-
-export interface ValidData {
-    name: string
-    email: string
-    phone: string
-}
-
-export interface Errors {
-    name: boolean
-    email: boolean
-    phone: boolean
-    position_id: boolean
-    photo: boolean
-}
-
+import { Errors } from "../models/form.models"
 
 
 const validator = (value: string, name: string) => {

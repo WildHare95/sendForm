@@ -1,19 +1,20 @@
 import { ChangeEvent, useEffect, useState } from "react"
 import "./Form-layout.scss"
 
-import { Errors, isPhotoValid, isValidForm } from "../../core/utils/validator"
+import { isValidForm } from "../../core/utils/validator"
 import usersAPI from "../../core/ api/APIUsers";
 import successPic from "../../assets/success-image.svg"
 
 import Input from "./Input"
 import RadioButton from "./RadioButton"
-import { FormValues } from "../../core/models/form.models"
+import { Errors, FormValues } from "../../core/models/form.models"
 import { Position } from "../../core/models/users.model";
 import UploadFileInput from "./UploadFileInput";
 import SuccessPortal from "../SuccessPortal/SuccessPortal";
-import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
+import Preloader from "../Preloader/Preloader";
 
 const Form = () => {
+    const [answerRequest, setAnswerRequest] = useState("")
     const [positions, setPositions] = useState<Position[]>([])
     const [formState, setFormState] = useState<FormValues>({
         name: "",
@@ -29,7 +30,10 @@ const Form = () => {
         position_id: true,
         photo: true
     })
-    const [showModal, setShowModal] = useState(false)
+    const [showModals, setShowModals] = useState({
+        loader: false,
+        successed: false,
+    })
 
     useEffect(() => {
         usersAPI.getPositions().then(response => {
@@ -63,51 +67,49 @@ const Form = () => {
     }
 
     const onUploadFile = (photo: File) => {
-        console.log({ ...formState, photo })
         setFormState({ ...formState, photo })
         setErrors({ ...errors, photo: false })
     }
 
     const onSubmitForm = (event: React.SyntheticEvent) => {
         event.preventDefault()
-        console.log(event.target)
+        const formData = new FormData()
+        setShowModals({ ...showModals, loader: true })
 
-        if (false) {
+        Object.keys(formState).forEach(key => {
+            const value = formState[key as keyof FormValues]
+            if (value) {
+                formData.append(key, value)
+            }
+        })
 
-            const formData = new FormData()
+        usersAPI.postUser(formData).then((response) => {
+            setShowModals({ ...showModals, loader: false })
+            if (response.success) {
+                setAnswerRequest(response.message)
+                setFormState({
+                    name: "",
+                    phone: "",
+                    email: "",
+                    photo: null,
+                    position_id: ""
+                })
+                setShowModals({ ...showModals, successed: true })
+                setTimeout(() => setShowModals({ ...showModals, successed: false }), 3500)
+            }
+        })
 
-            Object.keys(formState).forEach(key => {
-                const value = formState[key as keyof FormValues]
-                if (value) {
-                    formData.append(key, value)
-                }
-            })
-
-            // usersAPI.postUser(formData).then((response) => {
-            //     return response.json()
-            // }).then((response) => {
-            //     console.log(response)
-            //     if(response.success) {
-            //         setFormState({
-            //             name: "",
-            //             phone: "",
-            //             email: "",
-            //             photo: null,
-            //             position_id: ""
-            //         })
-            //     setShowModal(true)
-            //     setTimeout(() => setShowModal(false), 3500)
-            //     }
-            // })
-        }
     }
 
     return (
         <div className="form">
             <div className="form__inner">
+                {
+                    showModals.loader &&
+                    <Preloader />
+                }
                 <h1 className="form__title">Working with POST request</h1>
-                <div>
-
+                <div className="form__state">
                     <div className="form__input-wrapper">
                         <Input
                             id="input-name"
@@ -159,7 +161,7 @@ const Form = () => {
 
                     <button
                         className="form__submit"
-                        disabled={!isValidForm(errors)}
+                        disabled={isValidForm(errors)}
                         onClick={onSubmitForm}
 
                     >
@@ -169,10 +171,20 @@ const Form = () => {
 
 
                 {
-                    showModal &&
+
+                    showModals.successed &&
                     <SuccessPortal>
-                        <img src={successPic} alt="img" />
+                        <div>
+                            <div className="portal__img">
+                                <img src={successPic} alt="img" />
+                            </div>
+                            <h1 className="portal__answer-request">{answerRequest}</h1>
+                        </div>
                     </SuccessPortal>
+                }
+
+                {
+
                 }
 
             </div >

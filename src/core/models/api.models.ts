@@ -18,3 +18,8 @@ export interface NotFoundResponse {
     message: "Page not found"
 }
 
+export interface SuccessedPost {
+    success: boolean
+    user_id?: number
+    message: string
+}

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, memo, useRef, useState } from "react"
+import { ChangeEvent, FC, useRef, useState } from "react"
 import { isPhotoValid } from "../../core/utils/validator"
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
     photoFile: File | null
 }
 
-const UploadFileInput: FC<Props> = memo(({ onUploadFile, photoFile }) => {
+const UploadFileInput: FC<Props> = ({ onUploadFile, photoFile }) => {
 
     const [touched, setTouched] = useState(false)
 
@@ -17,7 +17,7 @@ const UploadFileInput: FC<Props> = memo(({ onUploadFile, photoFile }) => {
     }
 
     const uploadFile = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.files) {
+        if (event.target.files?.length) {
             const file = event.target.files[0]
             if (isPhotoValid(file)) {
                 onUploadFile(file)
@@ -37,6 +37,7 @@ const UploadFileInput: FC<Props> = memo(({ onUploadFile, photoFile }) => {
                     className="form__file-input"
                     ref={hiddenFileInput}
                     onChange={uploadFile}
+                    accept="image/jpeg"
 
                 />
                 <button
@@ -58,8 +59,6 @@ const UploadFileInput: FC<Props> = memo(({ onUploadFile, photoFile }) => {
 
         </div>
     )
-}, (prevProps, nextProps) => {
-    return prevProps.photoFile === nextProps.photoFile
-})
+}
 
 export default UploadFileInput
