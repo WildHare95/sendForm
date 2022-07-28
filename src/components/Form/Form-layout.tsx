@@ -1,127 +1,182 @@
-import { ChangeEvent, ReactEventHandler, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { debounce } from "../../core/utils/dobounce"
-import validator, { Errors, ValidData } from "../../core/utils/validator"
+import { ChangeEvent, useEffect, useState } from "react"
 import "./Form-layout.scss"
+
+import { Errors, isPhotoValid, isValidForm } from "../../core/utils/validator"
+import usersAPI from "../../core/ api/APIUsers";
+import successPic from "../../assets/success-image.svg"
+
 import Input from "./Input"
 import RadioButton from "./RadioButton"
+import { FormValues } from "../../core/models/form.models"
+import { Position } from "../../core/models/users.model";
+import UploadFileInput from "./UploadFileInput";
+import SuccessPortal from "../SuccessPortal/SuccessPortal";
+import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
 const Form = () => {
-
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [phoneNumber, setPhoneNumber] = useState("")
-    const [position, setPosition] = useState("")
-
-    const ref = useRef<HTMLInputElement>(null)
+    const [positions, setPositions] = useState<Position[]>([])
+    const [formState, setFormState] = useState<FormValues>({
+        name: "",
+        email: "",
+        phone: "",
+        photo: null,
+        position_id: ""
+    })
+    const [errors, setErrors] = useState<Errors>({
+        name: true,
+        email: true,
+        phone: true,
+        position_id: true,
+        photo: true
+    })
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        if (ref.current) {
-            ref.current.defaultChecked = true
-            setPosition(ref.current.value)
-        }
+        usersAPI.getPositions().then(response => {
+            setPositions(response)
+        })
     }, [])
 
-    const debouncedChangeHandler = useMemo(() => {
-        return debounce(700)
-    }, [])
 
-    const submitForm = (e: React.SyntheticEvent) => {
-        e.preventDefault()
-        const target = e.target as typeof e.target & {
-            name: { value: string }
-            email: { value: string }
-            phone: { value: string }
-        }
 
-        const obj = {
-            name: target.name.value,
-            email: target.email.value,
-            phone: target.phone.value,
-            position: position
-        }
-    }
-
-    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
         switch (event.target.name) {
             case "name":
-                setName(event.target.value)
+                setFormState({ ...formState, name: event.target.value })
                 break
             case "email":
-                setEmail(event.target.value)
+                setFormState({ ...formState, email: event.target.value })
                 break
             case "phone":
-                setPhoneNumber(event.target.value)
+                setFormState({ ...formState, phone: event.target.value })
                 break
         }
-
-        const obj = {
-            name: name,
-            email: email,
-            phone: phoneNumber,
-            position_id: 1
-        }
-
-        debouncedChangeHandler(() => {
-            console.log(validator(obj))
-            validator(obj)
-        })
-      
     }
 
-    const onChangeValue = (event: ChangeEvent<HTMLInputElement>) => {
-        setPosition(event.target.value)
+    const onHandleErrors = (error: boolean, value: string) => {
+        setErrors({ ...errors, [value]: error })
+    }
+
+    const onChangeValuePosition = (event: ChangeEvent<HTMLInputElement>) => {
+        setFormState({ ...formState, position_id: event.target.value })
+        setErrors({ ...errors, position_id: false })
+    }
+
+    const onUploadFile = (photo: File) => {
+        console.log({ ...formState, photo })
+        setFormState({ ...formState, photo })
+        setErrors({ ...errors, photo: false })
+    }
+
+    const onSubmitForm = (event: React.SyntheticEvent) => {
+        event.preventDefault()
+        console.log(event.target)
+
+        if (false) {
+
+            const formData = new FormData()
+
+            Object.keys(formState).forEach(key => {
+                const value = formState[key as keyof FormValues]
+                if (value) {
+                    formData.append(key, value)
+                }
+            })
+
+            // usersAPI.postUser(formData).then((response) => {
+            //     return response.json()
+            // }).then((response) => {
+            //     console.log(response)
+            //     if(response.success) {
+            //         setFormState({
+            //             name: "",
+            //             phone: "",
+            //             email: "",
+            //             photo: null,
+            //             position_id: ""
+            //         })
+            //     setShowModal(true)
+            //     setTimeout(() => setShowModal(false), 3500)
+            //     }
+            // })
+        }
     }
 
     return (
         <div className="form">
-            <form className="form__inner" onSubmit={submitForm}>
+            <div className="form__inner">
                 <h1 className="form__title">Working with POST request</h1>
+                <div>
 
-                <Input id="input-name" placeholder="Your name" name="name" value={name} onChange={onChange} />
-                <Input id="input-email" placeholder="Email" name="email" value={email} onChange={onChange} />
-                <Input id="input-phone" placeholder="Phone" name="phone" value={phoneNumber} onChange={onChange} />
-                <small className="form__notation">
-                    +38 (XXX) XXX - XX - XX
-                </small>
-
-                <div className="form__check-wrapper" onChange={onChangeValue}>
-
-                    <h2 className="form__suptitle">Select your position</h2>
-
-                    <RadioButton value="option1" id="frontend" position="Frontend developer" defaultChecked={ref} />
-                    <RadioButton value="option2" id="backend" position="Backend developer" />
-                    <RadioButton value="option3" id="designer" position="Designer" />
-                    <RadioButton value="option4" id="qa" position="QA" />
-
-                </div>
-
-                <div className="form__file-wrapper">
-                    <label
-                        htmlFor="file-input"
-                        className="form__file"
-                    >
-                        <input
-                            type="file"
-                            id="input-file"
-                            className="form__file-input"
+                    <div className="form__input-wrapper">
+                        <Input
+                            id="input-name"
+                            placeholder="Your name"
+                            name="name" value={formState.name}
+                            onChange={onChangeHandler}
+                            handleErrors={onHandleErrors}
                         />
-                        <button className="form__file-button">
-                            Upload
-                        </button>
-                        <span className="form__file-title">Upload your photo</span>
-                    </label>
-                </div>
+                        <Input
+                            id="input-email"
+                            placeholder="Email"
+                            name="email" value={formState.email}
+                            onChange={onChangeHandler}
+                            handleErrors={onHandleErrors}
+                        />
+                        <Input
+                            id="input-phone"
+                            placeholder="Phone"
+                            name="phone"
+                            value={formState.phone}
+                            onChange={onChangeHandler}
+                            handleErrors={onHandleErrors}
+                        />
+                        <small className="form__notation">
+                            +38 (XXX) XXX - XX - XX
+                        </small>
 
-                <button
-                    className="form__submit"
-                    disabled={false}
-                    onSubmit={(event) => submitForm(event)}
-                >
-                    Sign up
-                </button>
+                    </div>
 
-            </form >
-        </div >
+                    <div className="form__check-wrapper" onChange={onChangeValuePosition}>
+
+                        <h2 className="form__suptitle">Select your position</h2>
+                        {
+                            positions.map((position) => {
+                                return <RadioButton
+                                    key={position.id}
+                                    value={position.id}
+                                    id={position.id}
+                                    position={position.name}
+                                />
+                            })
+                        }
+                    </div>
+
+                    <UploadFileInput
+                        onUploadFile={onUploadFile}
+                        photoFile={formState.photo}
+                    />
+
+                    <button
+                        className="form__submit"
+                        disabled={!isValidForm(errors)}
+                        onClick={onSubmitForm}
+
+                    >
+                        Sign up
+                    </button>
+                </div >
+
+
+                {
+                    showModal &&
+                    <SuccessPortal>
+                        <img src={successPic} alt="img" />
+                    </SuccessPortal>
+                }
+
+            </div >
+        </div>
     )
 }
 

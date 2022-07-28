@@ -4,6 +4,7 @@
 .cards {
 
     margin-bottom: 140px;
+    position: relative;
 
     &__inner {
         display: flex;
@@ -21,6 +22,9 @@
     }
 
     &__content {
+        min-height: 60px;
+        width: 100%;
+        position: relative;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
@@ -58,9 +62,19 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+
+        &-email {
+            position: relative;
+        }
     }
 
+
+
     &__photo {
+        img {
+            border-radius: 50%;
+        }
+
         width: 70px;
         height: 70px;
 
@@ -76,6 +90,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+
     }
 }
 
@@ -91,6 +106,7 @@
             gap: 16px;
         }
     }
+
     .card {
         width: 344px;
     }
@@ -112,3 +128,4 @@
         }
     }
 }
+

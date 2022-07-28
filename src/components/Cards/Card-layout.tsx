@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { SuccessfulResponse } from "../../core/models/api.models";
 import usersAPI from "../../core/ api/APIUsers";
 import sortedByDate from "../../core/utils/sortedByDate";
+import Preloader from "../Preloader/Preloader";
 
 const Cards = () => {
 
@@ -14,10 +15,11 @@ const Cards = () => {
 
 
     useEffect(() => {
-        // usersAPI.getUsers(currentPage).then((response: SuccessfulResponse) => {
-        //     setTotalPages(response.total_pages)
-        //     setUsers(sortedByDate(users, response.users))
-        // })
+        setUsers([])
+        usersAPI.getUsers(currentPage).then((response: SuccessfulResponse) => {
+            setTotalPages(response.total_pages)
+            setUsers(sortedByDate(response.users))
+        })
     }, [currentPage])
 
     return (
@@ -30,6 +32,10 @@ const Cards = () => {
                             return <Card key={user.id} user={user} />
                         })
                     }
+                    {
+                        !users.length && <Preloader />
+                    }
+                    
                 </div>
                 {
                     currentPage !== totalPages &&

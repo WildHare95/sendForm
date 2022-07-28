@@ -8,3 +8,16 @@ export interface User {
     registration_timestamp: number,
     photo: string
 }
+
+export interface PostUser {
+    name: string
+    phone: string
+    email: string
+    position: string
+    photo: File | null
+}
+
+export interface Position { 
+    id: string
+    name: string
+}

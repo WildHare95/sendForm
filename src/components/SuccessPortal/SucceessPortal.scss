@@ -1,0 +1,27 @@
+.portal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+    opacity: 0;
+    animation: ani 3.5s;
+
+    background: rgba(0, 0, 0, 0.507);
+
+
+
+}
+
+@keyframes ani {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
+  }
